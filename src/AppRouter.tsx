@@ -11,6 +11,7 @@ export default function AppRouter() {
     <Router basepath={"/"}>
       {routers.map((route, idx) => {
         const [path, Page] = route as any;
+        console.log('path   ', path)
         return <Page path={path} key={idx} />;
       })}
     </Router>

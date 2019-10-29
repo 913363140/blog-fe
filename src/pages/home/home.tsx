@@ -1,84 +1,44 @@
-import { Layout, Menu } from 'antd'
+import { Layout} from 'antd'
 import 'antd/dist/antd.css'
 import { observer } from 'mobx-react'
 import * as React from 'react'
+import ReactMarkdown from 'react-markdown'
+import API from '../../api/api'
+import Directory from './components/directory/directory'
+import Tag from './components/tag/index'
+import Tocfiy from './components/tocify/index'
 import './home.less'
 
 const { Footer, Content, Sider } = Layout
-const { SubMenu } = Menu
 
 interface IProps {
   x: string
 }
 
 interface IState {
-  x: string
+  directoryList: any
+  content: string
+  tocList: any
+  tagList: []
 }
-
-const directoryList = [
-  {
-    childList: [
-      {id: 1, title: 'this is title1',createdTime: '2019-09-06'},
-      {id: 2, title: 'this is title2',createdTime: '2019-09-06'},
-      {id: 3, title: 'this is title3',createdTime: '2019-09-06'},
-    ],
-    directoryName: 'FE',
-  },
-  {
-    childList: [
-      {id: 4, title: 'this is title1',createdTime: '2019-09-06'},
-      {id: 5, title: 'this is title2',createdTime: '2019-09-06'},
-      {id: 6, title: 'this is title3',createdTime: '2019-09-06'},
-    ],
-    directoryName: 'Algorithm',
-  },
-  {
-    childList: [
-      {id: 7, title: 'this is title1',createdTime: '2019-09-06'},
-      {id: 8, title: 'this is title2',createdTime: '2019-09-06'},
-      {id: 9, title: 'this is title3',createdTime: '2019-09-06'},
-    ],
-    directoryName: '奇淫技巧',
-  },
-  {
-    childList: [
-      {id: 10, title: 'this is title1',createdTime: '2019-09-06'},
-      {id: 11, title: 'this is title2',createdTime: '2019-09-06'},
-      {id: 12, title: 'this is title3',createdTime: '2019-09-06'},
-    ],
-    directoryName: '读书笔记',
-  }
-]
 
 class Home extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props)
-    this.state = { x: '' }
+    this.state = {
+      content: '',
+      directoryList: [],
+      tagList: [],
+      tocList: [],
+    }
   }
 
-  public render() {
-    const directoryElement = directoryList.map((item, index) => {
-      return (
-        <SubMenu
-          key={'sub' + index}
-          title={
-            <span>
-              <span>{item.directoryName}</span>
-            </span>
-          }
-        >
-          {
-            item.childList.map(article => {
-              return (
-                <Menu.Item key={article.id}>
-                  <span className="nav-text">{article.title}</span>
-                </Menu.Item>
-              )
-            })
-          }
-        </SubMenu>          
-      )
-    })
+  public componentWillMount() {
+    this.init()
+  }
+
+  public render() { 
+    console.log('home rendner')
 
     return (
       <Layout>
@@ -92,49 +52,55 @@ class Home extends React.Component<IProps, IState> {
           }}
         >
           <div className="logo" />
-          <Menu key="menu" mode="inline" onClick={this.getArticle}>
-            {directoryElement}
-          </Menu>
+          <Directory directoryList={this.state.directoryList} handleClick={this.getArticle}/>
         </Sider>
-        <Layout style={{ marginLeft: 200 }}>
-          <Content style={{ margin: '24xp 16px 0', overflow: 'initial' }}>
-            <div style={{ padding: 24, background: 'fff', textAlign: 'center' }}>
-            ...
-            <br />
-            Really
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            long
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            <br />
-            ...
-            </div>
+        <Layout style={{ marginLeft: 0 }}>
+          <Content className='main-area'>
+            <ReactMarkdown source={this.state.content} renderers={{ heading: this.heading }} />
           </Content>
           <Footer style={{textAlign: 'center'}}> @2018 Created by lyc </Footer>
-        </Layout>  
+        </Layout> 
+        <Sider
+            theme="light"
+            style={{
+              background: '#f0f2f5',
+              position: 'fixed',
+              right: 30,
+              top: 30,
+            }}
+        >
+          <Tag tagList={this.state.tagList} />
+          <Tocfiy tocList={this.state.tocList} />
+        </Sider>
       </Layout>
     )
   }
 
-  private getArticle(props: { key: string; }) {
-    const { key } = props
-    // tslint:disable-next-line: no-console
-    console.log('请求文章id - '+ key)
+  private init = async () => {
+    const result: any = await API.getDirectory()
+    this.setState({directoryList: result.data})
   }
+  private heading = (props: any) => {
+    const level: number = props.level
+    const text: string = props.children[0].props.value
+    const Heading = ReactMarkdown.renderers.heading
+    this.state.tocList.push({level, text})
+    return (
+      <div id={text}>
+        <Heading {...props} />
+      </div>
+    )
+  }
+
+  private getArticle = async (props: { key: string }) => {
+    const { key } = props;
+    const result: any = await API.getArticle({id: key});
+    this.setState({
+      content: result.data.content,
+      tagList: result.data.tag,
+      tocList: []
+    });
+  };
 }
 
 export default observer(Home)
