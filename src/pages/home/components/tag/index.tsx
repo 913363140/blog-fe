@@ -2,7 +2,7 @@ import React from 'react'
 import './index.less'
 import { Card, Tag as Tags } from 'antd'
 
-interface IProps { 
+interface IProps {
   tagList: []
 }
 
@@ -20,7 +20,7 @@ export default class Tag extends React.Component<IProps> {
       return (
         <Tags
           key={index + item}
-          color='#2db7f5'
+          color="#2db7f5"
           style={{
             marginBottom: 8,
             maxWidth: 150,
@@ -28,15 +28,13 @@ export default class Tag extends React.Component<IProps> {
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
           }}
-        >{item}</Tags>
+        >
+          {item}
+        </Tags>
       )
     })
     return (
-      <Card
-        bordered={false}
-        className="tag"
-        title="标签"
-      >
+      <Card bordered={false} className="tag" title="标签">
         {tagElement}
       </Card>
     )
