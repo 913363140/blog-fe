@@ -1,4 +1,4 @@
-import { Layout} from 'antd'
+import { Layout } from 'antd'
 import 'antd/dist/antd.css'
 import { observer } from 'mobx-react'
 import * as React from 'react'
@@ -37,9 +37,8 @@ class Home extends React.Component<IProps, IState> {
     this.init()
   }
 
-  public render() { 
+  public render() {
     console.log('home rendner')
-
     return (
       <Layout>
         <Sider
@@ -48,26 +47,26 @@ class Home extends React.Component<IProps, IState> {
             height: '100vh',
             left: 0,
             overflow: 'auto',
-            position: 'fixed'
+            position: 'fixed',
           }}
         >
           <div className="logo" />
-          <Directory directoryList={this.state.directoryList} handleClick={this.getArticle}/>
+          <Directory directoryList={this.state.directoryList} handleClick={this.getArticle} />
         </Sider>
         <Layout style={{ marginLeft: 0 }}>
-          <Content className='main-area'>
+          <Content className="main-area">
             <ReactMarkdown source={this.state.content} renderers={{ heading: this.heading }} />
           </Content>
-          <Footer style={{textAlign: 'center'}}> @2018 Created by lyc </Footer>
-        </Layout> 
+          <Footer style={{ textAlign: 'center' }}> @2018 Created by lyc </Footer>
+        </Layout>
         <Sider
-            theme="light"
-            style={{
-              background: '#f0f2f5',
-              position: 'fixed',
-              right: 30,
-              top: 30,
-            }}
+          theme="light"
+          style={{
+            background: '#f0f2f5',
+            position: 'fixed',
+            right: 30,
+            top: 30,
+          }}
         >
           <Tag tagList={this.state.tagList} />
           <Tocfiy tocList={this.state.tocList} />
@@ -77,14 +76,15 @@ class Home extends React.Component<IProps, IState> {
   }
 
   private init = async () => {
+    this.getArticle({ key: '32' })
     const result: any = await API.getDirectory()
-    this.setState({directoryList: result.data})
+    this.setState({ directoryList: result.data })
   }
   private heading = (props: any) => {
     const level: number = props.level
     const text: string = props.children[0].props.value
     const Heading = ReactMarkdown.renderers.heading
-    this.state.tocList.push({level, text})
+    this.state.tocList.push({ level, text })
     return (
       <div id={text}>
         <Heading {...props} />
@@ -93,14 +93,14 @@ class Home extends React.Component<IProps, IState> {
   }
 
   private getArticle = async (props: { key: string }) => {
-    const { key } = props;
-    const result: any = await API.getArticle({id: key});
+    const { key } = props
+    const result: any = await API.getArticle({ id: key })
     this.setState({
       content: result.data.content,
       tagList: result.data.tag,
-      tocList: []
-    });
-  };
+      tocList: [],
+    })
+  }
 }
 
 export default observer(Home)
