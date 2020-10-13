@@ -76,7 +76,7 @@ class Home extends React.Component<IProps, IState> {
   }
 
   private init = async () => {
-    this.getArticle({ key: '32' })
+    this.getArticle({ key: '1' })
     const result: any = await API.getDirectory()
     this.setState({ directoryList: result.data })
   }

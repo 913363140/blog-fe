@@ -5,7 +5,8 @@
   "scripts": {
     "fe": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom"
+    "test": "node scripts/test.js --env=jsdom",
+    "deploy": "gh-pages -b master -d build"
   },
   "dependencies": {
     "@babel/core": "7.5.5",
