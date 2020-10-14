@@ -19,7 +19,7 @@ interface IState {
   directoryList: any
   content: string
   tocList: any
-  tagList: []
+  tagList: any
 }
 
 class Home extends React.Component<IProps, IState> {
@@ -76,9 +76,22 @@ class Home extends React.Component<IProps, IState> {
   }
 
   private init = async () => {
-    this.getArticle({ key: '32' })
+    this.getArticle({ key: '1' })
     const result: any = await API.getDirectory()
+    console.log('result :>> ', result)
     this.setState({ directoryList: result.data })
+    // this.setState({ directoryList:
+    //   [
+    //     {
+    //       childList: [
+    //         {
+    //           name: "react"
+    //         }
+    //       ],
+    //       name: "FE"
+    //     }
+    //   ]
+    // })
   }
   private heading = (props: any) => {
     const level: number = props.level
@@ -95,7 +108,10 @@ class Home extends React.Component<IProps, IState> {
   private getArticle = async (props: { key: string }) => {
     const { key } = props
     const result: any = await API.getArticle({ id: key })
+    console.log('result :>> ', result)
     this.setState({
+      // content: 'conetnt',
+      // tagList: ["AAA", "BBB", "CCC"],
       content: result.data.content,
       tagList: result.data.tag,
       tocList: [],
